@@ -20,7 +20,7 @@ const getMovies = (req, res) => {
   database
   .query("sql, sqlValues")
   .then(([movies]) => {
-    res.json(movies);
+    res.sendStatus(200).json(movies);
   })
   .catch((err) => {
     console.error(err);
@@ -65,7 +65,7 @@ const getUsers = (req, res) => {
   database
   .query("select * from users")
   .then(([users]) => {
-    res.json(users);
+    res.sendStatus(200).json(users);
   })
   .catch((err) => {
     console.error(err);
