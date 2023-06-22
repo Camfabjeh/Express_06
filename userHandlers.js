@@ -3,7 +3,7 @@ const database = require("./database");
 const getUsers = (req, res) => {
 
 
-let sql="select firstname, lastname, email, city, language from users"; 
+let sql="select firstname, lastname, email, city, language, hashedPassword from users"; 
 const sqlValues = [];
 
 
@@ -40,6 +40,25 @@ const getUserById = (req, res) => {
         res.json(users[0]);
       } else {
         res.status(404).send("Not Found");
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error retrieving data from database");
+    });
+};
+
+const getUserByEmailWithPasswordAndPassToNext = (req, res, next) => {
+  const {email} = req.body;
+
+  database
+    .query("select * from users where email = ?", [email])
+    .then(([users]) => {
+      if (users[0] != null) {
+        req.user = users[0];
+        next();
+      } else {
+        res.status(401);
       }
     })
     .catch((err) => {
@@ -107,6 +126,7 @@ const deleteUser = (req, res) => {
 module.exports = {
   getUsers,
   getUserById,
+  getUserByEmailWithPasswordAndPassToNext,
   postUser,
   updateUser,
   deleteUser,
